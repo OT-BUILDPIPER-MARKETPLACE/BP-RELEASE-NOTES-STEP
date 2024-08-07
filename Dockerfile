@@ -1,7 +1,11 @@
-FROM alpine
+
+FROM python:3-alpine
 RUN apk add --no-cache --upgrade bash
-RUN apk add jq
+RUN pip install --no-cache-dir jinja2
+RUN apk add --no-cache --upgrade bash jq git
 COPY build.sh .
+COPY generate_release_notes.py .
+ 
 
 ADD BP-BASE-SHELL-STEPS /opt/buildpiper/shell-functions/
 
