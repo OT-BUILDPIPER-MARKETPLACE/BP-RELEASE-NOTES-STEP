@@ -28,11 +28,19 @@ def format_release_notes(path):
     return template.render(date=current_date, log=log)
 
 def save_release_notes(content, path):
-    with open(os.path.join(path, 'release_notes.md'), 'w') as f:
+    release_notes_path = os.path.join(path, 'release_notes.md')
+    with open(release_notes_path, 'w') as f:
         f.write(content)
+    return release_notes_path
+
+def git_add_commit_push(path, file_path):
+    subprocess.run(['git', '-C', path, 'add', file_path], check=True)
+    subprocess.run(['git', '-C', path, 'commit', '-m', 'Add release notes'], check=True)
+    subprocess.run(['git', '-C', path, 'push'], check=True)
 
 if __name__ == '__main__':
     import sys
     path = sys.argv[1] if len(sys.argv) > 1 else '.'
     release_notes_content = format_release_notes(path)
-    save_release_notes(release_notes_content, path)
+    release_notes_path = save_release_notes(release_notes_content, path)
+    git_add_commit_push(path, release_notes_path)
